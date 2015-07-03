@@ -16,6 +16,50 @@
         DefaultLayoutServices.getAllDefaultLayouts=function(){
             return defaultLayouts;
         }
+        DefaultLayoutServices.getSpecificDefaultLayout=function(key){
+            return defaultLayouts[key];
+        }
+        /**
+         * Parse child
+         * @param info
+         * @param children
+         * @param iteration
+         * @returns {*}
+         */
+        DefaultLayoutServices.test = function (info, children,iteration) {
+            var startSeparator,endSeparator;
+            switch(parseInt(iteration,10)){
+                case 0:
+                    startSeparator="{";
+                    endSeparator="}";
+                    break;
+                case 1:
+                    startSeparator="(";
+                    endSeparator=")";
+                    break;
+                default :
+                    startSeparator="[";
+                    endSeparator="]";
+            }
+            info.hasChild = false;
+            var noOfChildren = LayoutServices.getObjectCount(children);
+            angular.forEach(children, function (v, k) {
+                this.divHierarchy = this.divHierarchy + startSeparator + v.className;
+                if (v.hasOwnProperty("child")) {
+                    this.hasChild = true;
+                    iteration++;
+                    LayoutServices.test(this, v.child,iteration);
+                } else {
+                    this.divHierarchy = this.divHierarchy + endSeparator;
+                }
+            }, info);
+            if (!info.hasChild) {
+                info.divHierarchy = info.divHierarchy + "]";
+                return info;
+            }
+
+
+        };
         return DefaultLayoutServices;
     }
 
@@ -29,7 +73,6 @@
         "colLLeft": false,
         "colRRight": false,
         "colRight": false,
-        "isOpen":true,
         "child": {
             0: {
                 "className": "col-main",

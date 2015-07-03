@@ -1,12 +1,14 @@
 <accordion close-others="true">
-    <accordion-group  is-open="value.isOpen" data-ng-repeat="(key,value) in layouts">
+    <accordion-group  is-open="layout.isOpen" data-ng-repeat="layout in user.selectedLayouts">
         <accordion-heading>
-            {{value.className}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+            {{layout.className}}<i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
         </accordion-heading>
         <div >
-            <div data-set-layout="{{key}}">
+            <div data-set-layout="{{$index}}">
             </div>
         </div>
     </accordion-group>
 
 </accordion>
+
+<a href="javascript:void(0)" data-ng-click="previousStep()">Previous </a>

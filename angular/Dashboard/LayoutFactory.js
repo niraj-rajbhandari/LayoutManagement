@@ -3,10 +3,11 @@
     "use strict";
 
     var selectedLayouts=[];
+    var selectedKeys=[];
 
-    LayoutFactory.$inject=["$localStorage"];
+    LayoutFactory.$inject=["$localStorage","DefaultLayoutFactory"];
     angular.module("LayoutManagement").factory("LayoutFactory", LayoutFactory);
-    function LayoutFactory($localStorage) {
+    function LayoutFactory($localStorage,DefaultLayoutFactory) {
 
         var LayoutServices = {};
 
@@ -19,56 +20,62 @@
             return Object.keys(objectToBeCounted).length;
         };
         /**
-         * Parse child
-         * @param info
-         * @param children
-         * @param iteration
-         * @returns {*}
+         * Add selected layout by user
+         * @param object layout
          */
-        LayoutServices.test = function (info, children,iteration) {
-            var startSeparator,endSeparator;
-            switch(parseInt(iteration,10)){
-                case 0:
-                    startSeparator="{";
-                    endSeparator="}";
-                    break;
-                case 1:
-                    startSeparator="(";
-                    endSeparator=")";
-                    break;
-                default :
-                    startSeparator="[";
-                    endSeparator="]";
-            }
-            info.hasChild = false;
-            var noOfChildren = LayoutServices.getObjectCount(children);
-            angular.forEach(children, function (v, k) {
-                this.divHierarchy = this.divHierarchy + startSeparator + v.className;
-                if (v.hasOwnProperty("child")) {
-                    this.hasChild = true;
-                    iteration++;
-                    LayoutServices.test(this, v.child,iteration);
-                } else {
-                    this.divHierarchy = this.divHierarchy + endSeparator;
-                }
-            }, info);
-            if (!info.hasChild) {
-                info.divHierarchy = info.divHierarchy + "]";
-                return info;
-            }
-
-
-        };
         LayoutServices.addSelectedLayout=function(layout){
+            console.log(selectedLayouts);
             selectedLayouts.push(layout);
-            $localStorage.selectedLayouts.push(layout);
-        }
+            $localStorage.user.selectedLayouts.push(layout);
+        };
+        /**
+         * Get selected layouts by the user
+         * @returns {Array}
+         */
         LayoutServices.getSelectedLayouts=function(){
             return selectedLayouts;
-        }
+        };
+        /**
+         * Set user selected layouts
+         * @param array layoutKeys keys of default layouts selected by user
+         */
+        LayoutServices.setSelectedLayouts=function(layoutKeys){
+            var userSelectedLayouts=[];
+
+            angular.forEach(layoutKeys, function (v, k) {
+                userSelectedLayouts.push(DefaultLayoutFactory.getSpecificDefaultLayout(v));
+            });
+
+            LayoutServices.resetSelectedLayouts(userSelectedLayouts);
+            $localStorage.user.selectedLayouts=userSelectedLayouts;
+
+            LayoutServices.setSelectedKeys(layoutKeys);
+        };
+        /**
+         * Reset selected Layouts
+         * @param selectedLayoutsList
+         */
         LayoutServices.resetSelectedLayouts=function(selectedLayoutsList){
             selectedLayouts=selectedLayoutsList;
+        };
+        LayoutServices.getSpecificSelectedLayout=function(key){
+            return selectedLayouts[key];
         }
+        /**
+         * Set selected keys of the layouts selected by user
+         * @param keys
+         */
+        LayoutServices.setSelectedKeys=function(keys){
+            selectedKeys=keys;
+            $localStorage.user.selectedKeys=keys;
+        };
+        /**
+         * Get keys of the default layout selected by the user
+         * @returns {Array}
+         */
+        LayoutServices.getSelectedKeys=function(){
+            return selectedKeys;
+        };
         return LayoutServices
     }
 

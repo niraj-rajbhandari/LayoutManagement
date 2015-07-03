@@ -1,6 +1,13 @@
 ;(function(){
     "use strict";
+    /**
+     * Set the angular module
+     */
     angular.module("LayoutManagement",["ngRoute","ngStorage","ui.bootstrap.tpls","ui.bootstrap.accordion","checklist-model"]);
+
+    /**
+     * Configure the angular application
+     */
     angular.module("LayoutManagement").config(configuration);
     configuration.$inject=["$routeProvider"];
     function configuration($routeProvider){
@@ -14,15 +21,24 @@
            redirectTo:'/'
         });
     }
+
+
+    /**
+     * Run the angular application
+     */
     angular.module("LayoutManagement").run(run);
     run.$inject=["$rootScope","$location","$localStorage","LayoutFactory","CONSTANT"];
     function run($rootScope,$location,$localStorage,LayoutFactory,CONSTANT){
-
+        //delete $localStorage.user;
         if(typeof $localStorage.user !==CONSTANT.UNDEFINED){
             LayoutFactory.resetSelectedLayouts($localStorage.user.selectedLayouts);
+            LayoutFactory.setSelectedKeys($localStorage.user.selectedKeys);
+
         }else{
-            $localStorage.selectedLayouts=[];
+            $localStorage.user={
+                selectedLayouts:[],
+                selectedKeys:[]
+            };
         }
-        console.log(LayoutFactory.getSelectedLayouts());
     }
 })();
