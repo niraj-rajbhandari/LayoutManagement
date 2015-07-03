@@ -1,0 +1,9 @@
+<div class="checkbox-wrapper" data-ng-repeat="layout in layouts">
+
+    <input type="checkbox" checklist-model="user.layouts" checklist-value="$index">
+<label>
+    {{layout.className}}
+</label>
+</div>
+{{user.layouts}}
+<a href="javascript:void(0)" data-ng-click="nextStep()">Next</a>
